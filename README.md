@@ -2,33 +2,37 @@
 
 English | [中文](README.zh.md)
 
-DeepSeek Harness (`dsh`) is an open-source agent harness developed by [DeepSeek AI](https://deepseek.com).
+DeepSeek Harness (`dsh`) — это open-source агентский каркас (agent harness), разработанный [DeepSeek AI](https://deepseek.com).
 
-It is built on an **everything-is-a-plugin** architecture and powered by [Cordis](https://github.com/cordiverse/cordis), whose design is described in [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
+Он построен на архитектуре **всё — это плагин** (everything-is-a-plugin) и работает на [Cordis](https://github.com/cordiverse/cordis), чей дизайн описан в работе [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
 
-Documentation: [https://deepseek-harness.github.io/deepseek-harness/](https://deepseek-harness.github.io/deepseek-harness/)
+Документация: [https://deepseek-harness.github.io/deepseek-harness/](https://deepseek-harness.github.io/deepseek-harness/)
 
-## Developer preview
+## Предпросмотр для разработчиков
 
-DeepSeek Harness is in _developer preview_ and iterating rapidly. **THERE WILL BE COMPATIBILITY-BREAKING CHANGES.**
+DeepSeek Harness находится в фазе _developer preview_ и быстро развивается. **ВНЕСУТСЯ ИЗМЕНЕНИЯ, ЛОМАЮЩИЕ СОВМЕСТИМОСТЬ.**
 
-Review the [safety notice](SAFETY.md) before running the project.
+Перед запуском проекта ознакомьтесь с [примечанием о безопасности](SAFETY.md).
 
-## Run
+<a id="run"></a>
 
-### Run from `npm`
+## Запуск
 
-Install `Node.js`, then run:
+### Запуск из `npm`
+
+Установите `Node.js`, затем выполните:
 
 ```sh
 npx @deepseek-ai/dsh web
 ```
 
-The command starts the Web UI at `http://127.0.0.1:3080` by default and opens it in the default browser for a local launch. An SSH launch only prints the host URL because the SSH client or editor owns the local forwarded address. Pass `--no-open` to run the server without opening a browser. See [Web UI guide](docs/user/guide/index.md).
+По умолчанию команда запускает Web UI на `http://127.0.0.1:3080` и при локальном запуске открывает его в браузере по умолчанию. При запуске через SSH выводится только URL хоста, потому что локальный перенаправленный адрес принадлежит SSH-клиенту или редактору. Передайте `--no-open`, чтобы запустить сервер без открытия браузера. Подробности — в [руководстве по Web UI](docs/user/guide/index.md).
 
-### Run from source
+<a id="run-from-source"></a>
 
-To run from a repository checkout:
+### Запуск из исходников
+
+Чтобы запустить из клонированного репозитория:
 
 ```sh
 git clone https://github.com/deepseek-ai/deepseek-harness.git
@@ -38,26 +42,26 @@ pnpm run build
 pnpm dsh web
 ```
 
-`pnpm run build` prepares the repository artifacts. `pnpm dsh web` uses those built artifacts without rebuilding.
+`pnpm run build` готовит артефакты репозитория. `pnpm dsh web` использует эти готовые артефакты без пересборки.
 
-## Community and support
+## Сообщество и поддержка
 
-- Submit feedback or bug reports through [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions).
-- Add the [`dsh-plugin`](https://github.com/topics/dsh-plugin) topic to your plugin repository for discoverability.
-- Join <a href="https://discord.gg/Ycq5dCaS4">DeepSeek Harness Discord community</a>.
+- Отправляйте обратную связь и сообщения об ошибках через [GitHub Discussions](https://github.com/deepseek-ai/deepseek-harness/discussions).
+- Добавьте тег [`dsh-plugin`](https://github.com/topics/dsh-plugin) в репозиторий вашего плагина, чтобы его было проще найти.
+- Присоединяйтесь к <a href="https://discord.gg/Ycq5dCaS4">сообществу DeepSeek Harness в Discord</a>.
 
-## Contributing
+## Вклад
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+См. [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Development
+## Разработка
 
-Start with the [development guide](docs/development.md) and [architecture documentation](docs/architecture.md).
+Начните с [руководства по разработке](docs/development.md) и [документации по архитектуре](docs/architecture.md).
 
-For agents, follow [AGENTS.md](AGENTS.md).
+Для агентов — следуйте [AGENTS.md](AGENTS.md).
 
-## License
+## Лицензия
 
 [MIT](LICENSE)
 
-Third-party dependencies and their licenses are disclosed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Третьесторонние зависимости и их лицензии раскрыты в [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
