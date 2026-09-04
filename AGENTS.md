@@ -133,6 +133,10 @@ Real-API tests and demos read `DEEPSEEK_API_KEY`, optional `DEEPSEEK_BASE_URL`, 
 - TODO markers: `FIXME`/`TODO`/`XXX` by urgency ([semantics](docs/development.md)).
 - Files end with exactly one trailing newline; `git diff --cached --check` (pre-commit) gates it.
 
+## Commit and push
+
+You own the commit and the push. Record every change in git, commit it with a message that comments on what changed and why, and push it — never leave work uncommitted in the working tree. Run the relevant checks first, then `git add`, `git commit`, and `git push`.
+
 ## Defensive patterns
 
 Read [docs/defensive-patterns.md](docs/defensive-patterns.md) before lifecycle, concurrency, subprocess, or teardown work.
