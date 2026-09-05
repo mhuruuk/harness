@@ -1,10 +1,10 @@
-# fi
+# Harness
 
-fi — это open-source агентский каркас.
+Harness — это open-source агентский каркас.
 
 Он работает на [Cordis](https://github.com/cordiverse/cordis), архитектура которого описана в работе [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
 
-Документация: [https://github.com/mhuruuk/fi/tree/repair-node-gyp-lto/docs](https://github.com/mhuruuk/fi/tree/repair-node-gyp-lto/docs)
+Документация: [https://github.com/mhuruuk/harness/tree/repair-node-gyp-lto/docs](https://github.com/mhuruuk/harness/tree/repair-node-gyp-lto/docs)
 
 Перед запуском проекта ознакомьтесь с [примечанием о безопасности](SAFETY.md).
 
@@ -19,14 +19,14 @@ fi — это open-source агентский каркас.
 Чтобы запустить из клонированного репозитория:
 
 ```sh
-git clone https://github.com/mhuruuk/fi.git
-cd fi
+git clone https://github.com/mhuruuk/harness.git
+cd harness
 pnpm install
 pnpm run build
-pnpm fi web
+pnpm dsh web
 ```
 
-`pnpm run build` готовит артефакты репозитория. `pnpm fi web` использует эти готовые артефакты без пересборки.
+`pnpm run build` готовит артефакты репозитория. `pnpm dsh web` использует эти готовые артефакты без пересборки.
 
 ## Разработка
 
