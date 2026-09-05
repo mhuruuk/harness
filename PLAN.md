@@ -8,9 +8,9 @@
 
 - [x] Скрипт `fi` в корневом `package.json` (алиас CLI), запуск `pnpm fi web` работает.
 - [x] `README.md` использует `pnpm fi web`.
-- [ ] Переименовать GitHub-репозиторий `harness` → `fi` (GitHub сам сделает редирект старых ссылок).
-- [ ] `README.md`: название `Harness` → `fi`, clone-URL `…/mhuruuk/fi.git`, `cd fi`, URL документации `…/fi/…`.
-- [ ] Корневые `AGENTS.md`/`CLAUDE.md`: «DeepSeek Harness» → «fi» (по желанию).
+- [x] Переименовать GitHub-репозиторий `harness` → `fi` (GitHub сам делает редирект старых ссылок).
+- [x] `README.md`: название `Harness` → `fi`, clone-URL `…/mhuruuk/fi.git`, `cd fi`, URL документации `…/fi/…`.
+- [x] Корневой `AGENTS.md`: «DeepSeek Harness» → «fi» (`CLAUDE.md` — симлинк, обновился сам).
 
 ### Уровень 2 — CLI `dsh` → `fi` (средне, дни)
 
