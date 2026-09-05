@@ -4,7 +4,7 @@ Status: implemented
 
 [English](2026-09-01-shared-base-web-fetch-default.md) | 中文
 
-本决策部分取代[已交付组合中的默认 Web 搜索](2026-07-31-web-default-search.zh.md)里关于抓取按需启用的选择。该记录继续负责搜索提供方选择、凭据、端点、超时，以及提供方可用性与模型工具注册之间的区分；没有任何 active Agent Note 被完全取代或符合归档条件。
+本决策部分取代[已交付组合中的默认 Web 搜索](2026-07-31-web-default-search.zh.md)里关于抓取按需启用的选择。该记录继续负责显式提供方 id 选择与出厂搜索超时，[SearXNG 默认搜索提供方](2026-09-05-searxng-default-search.zh.md)负责当前的提供方选择与凭据解析；没有任何 active Agent Note 被完全取代或符合归档条件。
 
 ## 问题
 

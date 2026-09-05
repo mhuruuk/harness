@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-09-05-searxng-default-search.md
+2026-09-05-searxng-default-search.md: a69ee969fe034f4c12e9248c6e5476cafa7b49f4
+2026-09-05-searxng-default-search.zh.md: 5dbda396eb452b6599a4ce7091c93b2deba7662d

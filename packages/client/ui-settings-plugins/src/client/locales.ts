@@ -9,8 +9,9 @@ export type PluginsSettingsLocaleKey =
   | 'bashMaxOutputBytes' | 'bashMaxOutputBytesHint'
   | 'agentLoopTitle' | 'agentLoopDescription' | 'agentLoopMaxParallel' | 'agentLoopMaxParallelHint'
   | 'webSearchTitle' | 'webSearchDescription'
-  | 'webSearchApiKey' | 'webSearchApiKeyHint' | 'webSearchApiKeySet' | 'webSearchApiKeyUnset'
-  | 'webSearchBaseUrl' | 'webSearchBaseUrlHint' | 'webSearchMaxUses' | 'webSearchMaxUsesHint'
+  | 'webSearchApiToken' | 'webSearchApiTokenHint' | 'webSearchApiTokenSet' | 'webSearchApiTokenUnset'
+  | 'webSearchBaseUrl' | 'webSearchBaseUrlHint' | 'webSearchLanguage' | 'webSearchLanguageHint'
+  | 'webSearchCategories' | 'webSearchCategoriesHint'
   | 'subagentModelSelectionTitle' | 'subagentModelSelectionDescription'
   | 'subagentModelSelectionToggle' | 'subagentModelSelectionChoose' | 'subagentModelSelectionAllowed'
   | 'subagentModelSelectionLoading' | 'subagentModelSelectionLoadFailed' | 'subagentModelSelectionRetry'
@@ -48,15 +49,17 @@ export const en: Record<PluginsSettingsLocaleKey, string> = {
   agentLoopMaxParallel: 'Parallel tool calls',
   agentLoopMaxParallelHint: 'Upper bound on parallel-safe calls running at once within one step.',
   webSearchTitle: 'Web search',
-  webSearchDescription: 'The DeepSeek search provider.',
-  webSearchApiKey: 'API key',
-  webSearchApiKeyHint: 'Stored outside the settings file. Leave blank to keep the current key.',
-  webSearchApiKeySet: 'A key is configured.',
-  webSearchApiKeyUnset: 'No key is configured; search is unavailable until one is.',
-  webSearchBaseUrl: 'Endpoint',
-  webSearchBaseUrlHint: 'Leave blank to use the provider default.',
-  webSearchMaxUses: 'Max searches per request',
-  webSearchMaxUsesHint: 'How many times one request may search before it must answer.',
+  webSearchDescription: 'The SearXNG search provider.',
+  webSearchApiToken: 'Instance token',
+  webSearchApiTokenHint: 'Leave blank to keep the current token.',
+  webSearchApiTokenSet: 'A token is configured.',
+  webSearchApiTokenUnset: 'No token is configured.',
+  webSearchBaseUrl: 'Instance',
+  webSearchBaseUrlHint: 'The SearXNG instance base URL. Leave blank to use the default.',
+  webSearchLanguage: 'Language',
+  webSearchLanguageHint: 'Query language hint passed to the instance. Leave blank to let it decide.',
+  webSearchCategories: 'Categories',
+  webSearchCategoriesHint: 'Comma-separated engine categories. Leave blank to use the instance default.',
   subagentModelSelectionTitle: 'Subagent',
   subagentModelSelectionDescription: 'Control which models agents may choose for subagents.',
   subagentModelSelectionToggle: 'Allow agents to choose models for subagents',
@@ -104,15 +107,17 @@ export const zh: Record<PluginsSettingsLocaleKey, string> = {
   agentLoopMaxParallel: '并行工具调用数',
   agentLoopMaxParallelHint: '同一步内最多同时运行多少个可并行的调用。',
   webSearchTitle: '网页搜索',
-  webSearchDescription: 'DeepSeek 搜索提供方。',
-  webSearchApiKey: 'API Key',
-  webSearchApiKeyHint: '不写入设置文件。留空表示保持当前密钥。',
-  webSearchApiKeySet: '已配置密钥。',
-  webSearchApiKeyUnset: '未配置密钥；配置之前搜索不可用。',
-  webSearchBaseUrl: '接口地址',
-  webSearchBaseUrlHint: '留空则使用提供方默认地址。',
-  webSearchMaxUses: '单次请求最多搜索次数',
-  webSearchMaxUsesHint: '一次请求在必须作答前最多可以搜索多少次。',
+  webSearchDescription: 'SearXNG 搜索提供方。',
+  webSearchApiToken: '实例令牌',
+  webSearchApiTokenHint: '留空表示保持当前令牌。',
+  webSearchApiTokenSet: '已配置令牌。',
+  webSearchApiTokenUnset: '未配置令牌。',
+  webSearchBaseUrl: '实例地址',
+  webSearchBaseUrlHint: 'SearXNG 实例基础地址。留空则使用默认地址。',
+  webSearchLanguage: '语言',
+  webSearchLanguageHint: '传递给实例的查询语言提示。留空则由实例自行决定。',
+  webSearchCategories: '类别',
+  webSearchCategoriesHint: '逗号分隔的引擎类别。留空则使用实例默认值。',
   subagentModelSelectionTitle: 'Subagent',
   subagentModelSelectionDescription: '控制 Agent 为 Subagent 选择模型的权限。',
   subagentModelSelectionToggle: '允许 Agent 为 Subagent 选择模型',

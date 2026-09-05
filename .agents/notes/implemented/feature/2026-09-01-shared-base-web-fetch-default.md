@@ -4,7 +4,7 @@ Status: implemented
 
 English | [中文](2026-09-01-shared-base-web-fetch-default.zh.md)
 
-This decision partially supersedes the fetch opt-in choice in [Default Web search in shipped compositions](2026-07-31-web-default-search.md). That record continues to own search provider selection, credentials, endpoint, timeout, and the separation between provider availability and model-tool registration; no active Agent Note is fully superseded or eligible for archival.
+This decision partially supersedes the fetch opt-in choice in [Default Web search in shipped compositions](2026-07-31-web-default-search.md). That record continues to own the explicit provider-id selection and the shipped search timeout, the [SearXNG default search provider](2026-09-05-searxng-default-search.md) owns the current provider selection and credential resolution, and no active Agent Note is fully superseded or eligible for archival.
 
 ## Problem
 

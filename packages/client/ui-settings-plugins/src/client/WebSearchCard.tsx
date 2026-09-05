@@ -1,7 +1,8 @@
 /**
- * The web-search provider's card: its endpoint, its per-request search budget,
- * and the key — which is written through the credentials domain, never into
- * the settings section, so the literal never rides a response.
+ * The web-search provider's card: the SearXNG instance's endpoint, language
+ * hint, and engine categories, plus the instance token — which the wire
+ * redacts from the section, so the card reports only whether one is
+ * configured and writes the literal on save.
  */
 
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
@@ -35,18 +36,14 @@ export function WebSearchCard(props: WebSearchCardProps) {
       onDiscard={props.discard}
     >
       <SecretField
-        id="plugin-config-web-search-key"
-        label={t('webSearchApiKey')}
-        hint={t('webSearchApiKeyHint')}
-        // The credentials domain accepts a key even when the settings document
-        // itself is read-only; they are separate stores with separate refusals.
-        // Its own writability is what disables this control — a key sourced
-        // from the process environment cannot be written from here.
-        disabled={!state.apiKeyWritable}
-        text={state.apiKey.text}
-        configured={state.apiKeyConfigured}
-        stateLabel={state.apiKeyConfigured ? t('webSearchApiKeySet') : t('webSearchApiKeyUnset')}
-        onEdit={(text) => { props.edit('apiKey', text) }}
+        id="plugin-config-web-search-token"
+        label={t('webSearchApiToken')}
+        hint={t('webSearchApiTokenHint')}
+        disabled={disabled}
+        text={state.apiToken.text}
+        configured={state.apiTokenConfigured}
+        stateLabel={state.apiTokenConfigured ? t('webSearchApiTokenSet') : t('webSearchApiTokenUnset')}
+        onEdit={(text) => { props.edit('apiToken', text) }}
       />
       <ValueField
         id="plugin-config-web-search-endpoint"
@@ -61,17 +58,28 @@ export function WebSearchCard(props: WebSearchCardProps) {
         onReset={() => { props.resetField('baseURL') }}
       />
       <ValueField
-        id="plugin-config-web-search-max-uses"
-        label={t('webSearchMaxUses')}
-        hint={t('webSearchMaxUsesHint')}
+        id="plugin-config-web-search-language"
+        label={t('webSearchLanguage')}
+        hint={t('webSearchLanguageHint')}
         overriddenLabel={t('overridden')}
         resetLabel={t('reset')}
         invalidLabel={t('invalidNumber')}
-        numeric
         disabled={disabled}
-        {...state.maxUses}
-        onEdit={(text) => { props.edit('maxUses', text) }}
-        onReset={() => { props.resetField('maxUses') }}
+        {...state.language}
+        onEdit={(text) => { props.edit('language', text) }}
+        onReset={() => { props.resetField('language') }}
+      />
+      <ValueField
+        id="plugin-config-web-search-categories"
+        label={t('webSearchCategories')}
+        hint={t('webSearchCategoriesHint')}
+        overriddenLabel={t('overridden')}
+        resetLabel={t('reset')}
+        invalidLabel={t('invalidNumber')}
+        disabled={disabled}
+        {...state.categories}
+        onEdit={(text) => { props.edit('categories', text) }}
+        onReset={() => { props.resetField('categories') }}
       />
     </PluginCard>
   )

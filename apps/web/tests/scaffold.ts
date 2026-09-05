@@ -359,7 +359,7 @@ export interface LaunchOptions {
   /** Leave the current welcome notice pending; ordinary scenarios pre-acknowledge it before browser boot. */
   welcomeNoticePending?: boolean
   /**
-   * Patch the shipped DeepSeek search row to a deterministic endpoint and
+   * Mount the DeepSeek search provider at a deterministic endpoint and
    * credential reference. Browser search scenarios keep the real provider and
    * credentials seam while avoiding external search traffic and ambient keys.
    */
@@ -611,11 +611,14 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
     ...options.deepSeekSearch === undefined
       ? []
       : [{
-        id: 'web-search-deepseek',
-        config: {
-          apiKeyEnv: options.deepSeekSearch.apiKeyEnv,
-          baseURL: options.deepSeekSearch.baseURL,
-        },
+        insert: [{
+          id: 'web-search-deepseek',
+          name: '@deepseek-ai/dsh-web-search-deepseek',
+          config: {
+            apiKeyEnv: options.deepSeekSearch.apiKeyEnv,
+            baseURL: options.deepSeekSearch.baseURL,
+          },
+        }],
       }],
     ...mode === 'record' || options.deepSeekMissingCredential === true
       ? []

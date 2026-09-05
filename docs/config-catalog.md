@@ -3264,6 +3264,28 @@ export interface Config {
 
 Source: [`packages/web/web-search-perplexity/src/index.ts:30`](../packages/web/web-search-perplexity/src/index.ts)
 
+<a id="deepseek-aidsh-web-search-searxng"></a>
+
+## `@deepseek-ai/dsh-web-search-searxng`
+
+Requires: `web`
+
+```ts config-catalog
+/** Plugin config (all optional — `apply` fills env-var and constant defaults). */
+export interface Config {
+  /** Optional instance API token; sent as a Bearer header. A local instance needs none. */
+  apiToken?: string
+  /** Instance endpoint base; `/search` is appended. */
+  baseURL?: string
+  /** SearXNG `language` parameter (e.g. `en`, `ru`, `all`). Omitted = instance default. */
+  language?: string
+  /** SearXNG `categories` parameter (e.g. `general`, `news`). Omitted = instance default. */
+  categories?: string
+}
+```
+
+Source: [`packages/web/web-search-searxng/src/index.ts:33`](../packages/web/web-search-searxng/src/index.ts)
+
 <a id="deepseek-aidsh-webhook-github"></a>
 
 ## `@deepseek-ai/dsh-webhook-github`

@@ -1,68 +1,56 @@
 /**
- * The web-search card's staged form over the `web-search-deepseek` settings
+ * The web-search card's staged form over the `web-search-searxng` settings
  * namespace.
  *
- * The key is the one control that does not live in the section: its literal
- * never rides a response, so the card learns only whether one is configured
- * and writes it through the credentials domain, addressed by the reference the
- * section names. It is still staged with the rest of the form, so one save
- * covers everything the card shows.
+ * The token is the one control that does not render a stored value: the wire
+ * redacts it from the section, so the card learns only whether one is
+ * configured — from the descriptor's secret sidecar — and writes the literal
+ * into the section on save. It is still staged with the rest of the form, so
+ * one save covers everything the card shows.
  */
 
-import type { Context as ClientContext } from '@deepseek-ai/cordis'
-// Type-only: pulls the ctx.remote merge into this program.
-import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-store'
-import type { SettingsScope, SettingsScopeSnapshot } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {
+  SettingsDescribeFace, SettingsScope,
+} from '@deepseek-ai/dsh-client-ui-settings/client'
 import {
-  CardForm, numberField, textField,
+  CardForm, textField,
   type CardActions, type CardFieldState, type CardShell,
 } from './card-form.ts'
 
 /**
- * Namespace of the DeepSeek search provider. Spelled here rather than
+ * Namespace of the SearXNG search provider. Spelled here rather than
  * imported: a client package must not depend on a Host package.
  */
-export const WEB_SEARCH_NS = 'web-search-deepseek'
+export const WEB_SEARCH_NS = 'web-search-searxng'
 
-/** Credential reference the provider resolves when the section names none. */
-const DEFAULT_API_KEY_REF = 'DEEPSEEK_API_KEY'
-
-/** Form field the credential control stages under. */
-const API_KEY_FIELD = 'apiKey'
+/** Form field the token control stages under. */
+const API_TOKEN_FIELD = 'apiToken'
 
 /** The search-provider fields this card edits. */
 export interface WebSearchSettings {
-  /** Credential reference naming the environment key. */
-  apiKeyEnv?: string
-  /** Provider endpoint; blank inherits the provider default. */
+  /** Instance token; the wire redacts it, so the card only reports its presence. */
+  apiToken?: string
+  /** Instance base URL; blank inherits the provider default. */
   baseURL?: string
-  /** Maximum searches served within one request. */
-  maxUses?: number
-}
-
-/** What the credentials domain last reported, and for which reference. */
-interface CredentialState {
-  /** Reference this answer describes; a stale response for another one is dropped. */
-  ref: string
-  /** Whether any layer supplies a value for it. */
-  configured: boolean
-  /** Whether `credentials/set` can affect it; false disables the control. */
-  writable: boolean
+  /** Query language hint passed to the instance. */
+  language?: string
+  /** Comma-separated engine categories. */
+  categories?: string
 }
 
 /** What the web-search card renders. */
 export interface WebSearchCardState extends CardShell {
-  /** Provider endpoint. */
+  /** Instance base URL. */
   baseURL: CardFieldState
-  /** Searches allowed per request. */
-  maxUses: CardFieldState
-  /** The staged credential, which starts blank on every load. */
-  apiKey: CardFieldState
-  /** Whether the Host reports a credential configured for the referenced key. */
-  apiKeyConfigured: boolean
-  /** Whether the credentials domain accepts a write for it; false disables the control. */
-  apiKeyWritable: boolean
+  /** Query language hint. */
+  language: CardFieldState
+  /** Engine categories. */
+  categories: CardFieldState
+  /** The staged token, which starts blank on every load. */
+  apiToken: CardFieldState
+  /** Whether the Host reports a token configured for the section. */
+  apiTokenConfigured: boolean
 }
 
 /** The registration-side face the web-search card's slot entry injects. */
@@ -73,84 +61,54 @@ export interface WebSearchCardFace extends CardActions {
   }
 }
 
-/** Bridges the `web-search-deepseek` scope and the credentials domain onto the card. */
+/** Bridges the `web-search-searxng` scope and its secret sidecar onto the card. */
 export class WebSearchCardController {
   private readonly form: CardForm<WebSearchSettings>
   private readonly store: SnapshotStore<WebSearchCardState>
-  private credential: CredentialState = { ref: '', configured: false, writable: true }
+  private tokenConfigured = false
 
   /**
-   * @param scope - the bound settings scope for the `web-search-deepseek` namespace.
-   * @param ctx - the card plugin's context, whose `remote.credentials` namespace
-   * answers for the credential the section references.
+   * @param scope - the bound settings scope for the `web-search-searxng` namespace.
+   * @param describe - the shared describe face, whose namespace view carries
+   * the redaction sidecar the bound scope does not.
    */
   constructor(
     private readonly scope: SettingsScope<WebSearchSettings>,
-    private readonly ctx: ClientContext,
+    private readonly describe: SettingsDescribeFace,
   ) {
     this.form = new CardForm(
       scope,
-      [textField('baseURL'), numberField('maxUses')],
-      [{ field: API_KEY_FIELD, write: text => this.writeKey(text) }],
+      [textField('baseURL'), textField('language'), textField('categories')],
+      [{ field: API_TOKEN_FIELD, write: text => this.writeToken(text) }],
     )
     this.store = this.form.bind(() => this.projection())
-    scope.subscribe(() => { void this.readCredential() })
-    void this.readCredential()
+    this.describe.subscribe(() => { this.syncTokenState() })
+    this.syncTokenState()
   }
 
   private projection(): WebSearchCardState {
     return {
       ...this.form.shell(),
       baseURL: this.form.field('baseURL'),
-      maxUses: this.form.field('maxUses'),
-      apiKey: this.form.field(API_KEY_FIELD),
-      apiKeyConfigured: this.credential.configured,
-      apiKeyWritable: this.credential.writable,
+      language: this.form.field('language'),
+      categories: this.form.field('categories'),
+      apiToken: this.form.field(API_TOKEN_FIELD),
+      apiTokenConfigured: this.tokenConfigured,
     }
   }
 
   /**
-   * Ask the credentials domain about the reference the section currently names.
+   * Re-read the secret sidecar after the mirror moves.
    *
-   * The answer is stored with the reference it describes: `apiKeyEnv` can
-   * change between the request and its response, and two reads can settle out
-   * of order, so a response is published only while it still answers for the
-   * reference in force.
+   * The token can be written from somewhere else — a settings document edit —
+   * and the redacted section value does not change when it is, so without
+   * this the badge keeps reporting a state the Host already replaced.
    */
-  private async readCredential(): Promise<void> {
-    const ref = refOf(this.scope.getSnapshot())
-    if (ref !== this.credential.ref) {
-      // A new reference knows nothing yet; keeping the old answer would claim
-      // the key is configured under a name nobody has checked.
-      this.credential = { ref, configured: false, writable: true }
-      this.store.set(this.projection())
-    }
-    const response = await this.ctx.remote.credentials.describe([ref])
-    if (!response.ok || ref !== refOf(this.scope.getSnapshot())) return
-    const view = response.value[ref]
-    const next: CredentialState = {
-      ref,
-      configured: view?.configured ?? false,
-      // An unknown reference is treated as writable: the control stays usable
-      // and the Host is what refuses, rather than the card guessing a refusal.
-      writable: view?.writable ?? true,
-    }
-    if (next.configured === this.credential.configured && next.writable === this.credential.writable) return
-    this.credential = next
+  private syncTokenState(): void {
+    const set = this.tokenSet()
+    if (set === this.tokenConfigured) return
+    this.tokenConfigured = set
     this.store.set(this.projection())
-  }
-
-  /**
-   * Re-read after the Host reports a change to the reference this card watches.
-   *
-   * A key can be written from somewhere else — the Models page addresses the
-   * same reference — and the settings section does not change when it is, so
-   * without this the badge keeps reporting a state the Host already replaced.
-   * @param ref - the reference the Host reports as changed.
-   */
-  refreshCredential(ref: string): void {
-    if (ref !== this.credential.ref) return
-    void this.readCredential()
   }
 
   /**
@@ -162,25 +120,29 @@ export class WebSearchCardController {
   }
 
   /**
-   * Write the staged key, then re-read whether the Host now holds one.
-   * @param value - the staged credential literal.
-   * @returns whether the Host reports a configured credential afterwards.
+   * Write the staged token into the section, then report whether the Host
+   * holds one.
+   *
+   * The Host is the only authority on whether the token now exists: the
+   * write answer folds its sidecar into the mirror before this returns, so
+   * the read-back is the committed state.
+   * @param value - the staged token literal.
+   * @returns whether the Host reports a configured token afterwards.
    */
-  private async writeKey(value: string): Promise<boolean> {
-    // Refusals surface through the re-read below: the Host is the only
-    // authority on whether the key now exists.
-    await this.ctx.remote.credentials.set(refOf(this.scope.getSnapshot()), value)
-    await this.readCredential()
-    return this.credential.configured
+  private async writeToken(value: string): Promise<boolean> {
+    await this.scope.set(API_TOKEN_FIELD, value)
+    return this.tokenSet()
   }
-}
 
-/**
- * The credential reference the section names, or the provider's default.
- * @param snapshot - the current scope snapshot.
- * @returns the reference to address.
- */
-function refOf(snapshot: SettingsScopeSnapshot<WebSearchSettings>): string {
-  const declared = snapshot.value?.apiKeyEnv
-  return declared !== undefined && declared.length > 0 ? declared : DEFAULT_API_KEY_REF
+  /**
+   * Whether the section's redaction sidecar reports a token value.
+   * @returns the sidecar's `set` flag for the token position.
+   */
+  private tokenSet(): boolean {
+    const view = this.describe.getSnapshot().view
+    return view?.namespaces
+      .find(row => row.ns === WEB_SEARCH_NS)
+      ?.secrets.find(secret => secret.path[0] === API_TOKEN_FIELD)
+      ?.set ?? false
+  }
 }

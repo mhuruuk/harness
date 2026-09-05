@@ -4,7 +4,7 @@ Status: implemented
 
 [English](2026-07-31-web-default-search.md) | 中文
 
-[共享 base 的 Web 抓取默认值](2026-09-01-shared-base-web-fetch-default.zh.md)取代本文关于抓取按需启用的决策。本文继续负责默认搜索提供方、凭据解析、端点、超时，以及提供方可用性与模型工具注册之间的区分。
+[共享 base 的 Web 抓取默认值](2026-09-01-shared-base-web-fetch-default.zh.md)取代本文关于抓取按需启用的决策，[SearXNG 默认搜索提供方](2026-09-05-searxng-default-search.zh.md)取代其中的默认搜索提供方与凭据解析。本文继续负责显式提供方 id 选择、出厂 60 秒搜索预算，以及提供方可用性与模型工具注册之间的分离。
 
 ## 问题
 
@@ -12,7 +12,7 @@ Status: implemented
 
 ## 决策
 
-`packages/bundle/base/cordis.patch.yml` 明确挂载 `dsh-web`，配置 `searchProvider: deepseek-official` 与 `fetchProvider: http`，同时挂载 `dsh-web-search-deepseek`、`dsh-web-fetch-http`，并以 `searchTimeoutMs: 60000` 挂载 `dsh-tool-web`。[共享 base 的 Web 抓取默认值](2026-09-01-shared-base-web-fetch-default.zh.md)负责当前的 `fetch: true`；本文继续负责提供方选择、搜索凭据与超时。显式提供方 id 使选择不受注册顺序影响，同时个人覆盖层或 `--patch` 覆盖层仍可替换或禁用这些配置项。已交付的一分钟预算用于覆盖一次辅助 DeepSeek Messages 请求及服务端检索，同时保持 `dsh-tool-web` 提供方无关的 30 秒默认值不变，以供自定义组合使用。[Web 能力 seam 决策](../architecture/2026-06-24-web-capability-seam.zh.md)负责公开抓取安全策略。
+`packages/bundle/base/cordis.patch.yml` 明确挂载 `dsh-web`，配置 `searchProvider: searxng` 与 `fetchProvider: http`，同时挂载 `dsh-web-search-searxng`、`dsh-web-fetch-http`，并以 `searchTimeoutMs: 60000` 挂载 `dsh-tool-web`。[SearXNG 默认搜索提供方](2026-09-05-searxng-default-search.zh.md)负责当前的提供方选择与凭据解析，[共享 base 的 Web 抓取默认值](2026-09-01-shared-base-web-fetch-default.zh.md)负责当前的 `fetch: true`；本文继续负责显式提供方 id 选择与出厂搜索预算。显式提供方 id 使选择不受注册顺序影响，同时个人覆盖层或 `--patch` 覆盖层仍可替换或禁用这些配置项。已交付的一分钟预算用于覆盖一次辅助 DeepSeek Messages 请求及服务端检索，同时保持 `dsh-tool-web` 提供方无关的 30 秒默认值不变，以供自定义组合使用。[Web 能力 seam 决策](../architecture/2026-06-24-web-capability-seam.zh.md)负责公开抓取安全策略。
 
 DeepSeek 搜索使用与官方会话适配器相同的 `DEEPSEEK_API_KEY` 凭据引用。提供方在每次搜索内部通过可选的 `ctx.credentials` 服务解析该引用；只有未挂载该 seam 的组合才会回退到启动进程的环境变量，非空的 `apiKey` 字面值仍作为程序化配置的最后兜底。因此，由 Web 的 Models 页存储或轮换的密钥无需重启即可用于下一次搜索，提供方也无需保留该值。由于 `WebSearchProvider.available()` 是同步方法，它会将已安装解析器视为本地可用；若动态凭据缺失，操作会以提供方专属错误码 `WEB_PROVIDER_CREDENTIAL_MISSING` 失败，而稳定的工具 schema 仍保持注册。
 

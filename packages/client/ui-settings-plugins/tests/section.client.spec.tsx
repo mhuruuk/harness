@@ -506,10 +506,10 @@ describe('WebSearchCard', () => {
     const store = createSnapshotStore<WebSearchCardState>({
       ...settled,
       baseURL: field(''),
-      maxUses: field('5'),
-      apiKey: field(''),
-      apiKeyConfigured: false,
-      apiKeyWritable: true,
+      language: field(''),
+      categories: field(''),
+      apiToken: field(''),
+      apiTokenConfigured: false,
       ...state,
     })
     const actions = cardActions()
@@ -518,54 +518,54 @@ describe('WebSearchCard', () => {
     return actions
   }
 
-  it('reports whether a key is configured without ever showing one', () => {
-    renderWebSearch({ apiKeyConfigured: true })
+  it('reports whether a token is configured without ever showing one', () => {
+    renderWebSearch({ apiTokenConfigured: true })
     fireEvent.click(screen.getByText(en.webSearchTitle))
 
-    expect(screen.getByText(en.webSearchApiKeySet)).toBeTruthy()
-    expect(screen.getByLabelText(en.webSearchApiKey)).toHaveProperty('type', 'password')
+    expect(screen.getByText(en.webSearchApiTokenSet)).toBeTruthy()
+    expect(screen.getByLabelText(en.webSearchApiToken)).toHaveProperty('type', 'password')
   })
 
-  it('keeps the key control usable while the settings document is read-only', () => {
-    const actions = renderWebSearch({ writable: false })
+  it('disables every control while the settings document is read-only', () => {
+    renderWebSearch({ writable: false })
     fireEvent.click(screen.getByText(en.webSearchTitle))
 
-    const key = screen.getByLabelText(en.webSearchApiKey)
-    expect(key).toHaveProperty('disabled', false)
+    expect(screen.getByLabelText(en.webSearchApiToken)).toHaveProperty('disabled', true)
     expect(screen.getByLabelText(en.webSearchBaseUrl)).toHaveProperty('disabled', true)
-
-    fireEvent.change(key, { target: { value: 'ds-secret' } })
-
-    expect(actions.edit).toHaveBeenCalledWith('apiKey', 'ds-secret')
+    expect(screen.getByLabelText(en.webSearchLanguage)).toHaveProperty('disabled', true)
+    expect(screen.getByLabelText(en.webSearchCategories)).toHaveProperty('disabled', true)
   })
 
-  it('disables the key control when the reference itself is not writable', () => {
-    // A key coming from the process environment: the settings document is
-    // writable, the credential is not.
-    renderWebSearch({ apiKeyConfigured: true, apiKeyWritable: false })
+  it('stages a token edit without writing it', () => {
+    const actions = renderWebSearch()
     fireEvent.click(screen.getByText(en.webSearchTitle))
 
-    expect(screen.getByLabelText(en.webSearchApiKey)).toHaveProperty('disabled', true)
-    expect(screen.getByLabelText(en.webSearchBaseUrl)).toHaveProperty('disabled', false)
+    fireEvent.change(screen.getByLabelText(en.webSearchApiToken), { target: { value: 'searxng-secret' } })
+
+    expect(actions.edit).toHaveBeenCalledWith('apiToken', 'searxng-secret')
+    expect(actions.save).not.toHaveBeenCalled()
   })
 
-  it('stages the endpoint, the search budget, and their resets', () => {
+  it('stages the endpoint, language, categories, and their resets', () => {
     const actions = renderWebSearch({
-      baseURL: field('https://search.test/v1', { overridden: true }),
-      maxUses: field('3', { overridden: true }),
+      baseURL: field('https://search.test', { overridden: true }),
+      language: field('ru', { overridden: true }),
+      categories: field('general', { overridden: true }),
     })
     fireEvent.click(screen.getByText(en.webSearchTitle))
 
     fireEvent.change(screen.getByLabelText(en.webSearchBaseUrl), { target: { value: 'https://other.test' } })
-    fireEvent.change(screen.getByLabelText(en.webSearchMaxUses), { target: { value: '4' } })
+    fireEvent.change(screen.getByLabelText(en.webSearchLanguage), { target: { value: 'en' } })
+    fireEvent.change(screen.getByLabelText(en.webSearchCategories), { target: { value: 'general,news' } })
     const resets = screen.getAllByRole('button', { name: en.reset })
-    expect(resets).toHaveLength(2)
+    expect(resets).toHaveLength(3)
     for (const reset of resets) fireEvent.click(reset)
 
     expect(actions.edit.mock.calls).toEqual([
       ['baseURL', 'https://other.test'],
-      ['maxUses', '4'],
+      ['language', 'en'],
+      ['categories', 'general,news'],
     ])
-    expect(actions.resetField.mock.calls).toEqual([['baseURL'], ['maxUses']])
+    expect(actions.resetField.mock.calls).toEqual([['baseURL'], ['language'], ['categories']])
   })
 })
