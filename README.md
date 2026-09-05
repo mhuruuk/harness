@@ -23,10 +23,10 @@ git clone https://github.com/mhuruuk/harness.git
 cd harness
 pnpm install
 pnpm run build
-pnpm dsh web
+pnpm fi web
 ```
 
-`pnpm run build` готовит артефакты репозитория. `pnpm dsh web` использует эти готовые артефакты без пересборки.
+`pnpm run build` готовит артефакты репозитория. `pnpm fi web` использует эти готовые артефакты без пересборки.
 
 ## Разработка
 
