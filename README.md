@@ -1,10 +1,10 @@
 # Harness
 
-Harness (`dsh`) — это open-source агентский каркас.
+Harness — это open-source агентский каркас.
 
-Он работает на [Cordis](https://github.com/cordiverse/cordis), чей дизайн описан в работе [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
+Он работает на [Cordis](https://github.com/cordiverse/cordis), архитектура которого описана в работе [_A Programming Paradigm for Spatiotemporal Composability_](https://arxiv.org/abs/2608.25512).
 
-Документация: [https://deepseek-harness.github.io/deepseek-harness/](https://deepseek-harness.github.io/deepseek-harness/)
+Документация: [https://github.com/mhuruuk/harness/tree/repair-node-gyp-lto/docs](https://github.com/mhuruuk/harness/tree/repair-node-gyp-lto/docs)
 
 Перед запуском проекта ознакомьтесь с [примечанием о безопасности](SAFETY.md).
 
@@ -20,7 +20,7 @@ Harness (`dsh`) — это open-source агентский каркас.
 
 ```sh
 git clone https://github.com/mhuruuk/harness.git
-cd deepseek-harness
+cd harness
 pnpm install
 pnpm run build
 pnpm dsh web
